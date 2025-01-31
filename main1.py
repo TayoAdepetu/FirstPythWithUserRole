@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Header
 from typing import Optional
-from pydantic import BaseModel
 
 
 app = FastAPI()
@@ -35,9 +34,7 @@ async def greet_query(name: Optional[str] = "TheTayo", age: int = 0) -> dict:
     }
 
 
-class BookCreateModel(BaseModel):
-    title: str
-    author: str
+
 
 
 @app.post("/create_book")
