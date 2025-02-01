@@ -1,57 +1,71 @@
-from fastapi import APIRouter, status, Header
+from fastapi import APIRouter, status, Header, Depends
 from fastapi.exceptions import HTTPException
-from src.books.book_data import books
-from src.books.schemas import BookCreateModel
+from src.books.service import BookService
+from src.books.schemas import Book, BookCreateModel, BookUpdateModel
+from src.db.main import get_session
+from sqlmodel.ext.asyncio.session import AsyncSession
+
 
 from typing import List, Optional
 
 book_router = APIRouter()
-
-@book_router.get("/")
-def read_root():
-    return {"message": "Welcome to FastAPI"}
+book_service = BookService()
 
 
-@book_router.get("/greet/{name}")
-def greet(name: str) -> dict:
-    return {"message": f"How are you doing, {name}"}
+@book_router.get("/", response_model=List[Book])
+async def get_all_books(session: AsyncSession = Depends(get_session)):
+    books = await book_service.get_all_books(session)
+    return books
 
 
-@book_router.get("/greet")
-def greet_query(name: str) -> dict:
-    return {"message": f"How are you doing, {name}"}
-
-
-@book_router.get("/regreet/{name}")
-def greet_query(name: str, age: int) -> dict:
-    return {
-        "message": f"How are you doing, {name}. I heard you are {age} years old. Is that true?"
-    }
-
-
-@book_router.get("/optionalgreet")
-async def greet_query(name: Optional[str] = "TheTayo", age: int = 0) -> dict:
-    return {
-        "message": f"How are you doing, {name}. I heard you are {age} years old. Is that true?"
-    }
-
-
-@book_router.post("/create_book")
-async def create_book(book_data: BookCreateModel) -> dict:
-    return {"title": book_data.title, "author": book_data.author}
-
-
-@book_router.get("/get_headers", status_code=201)
-async def get_headers(
-    accept: str = Header(None),
-    content_type: str = Header(None),
-    user_agent: str = Header(None),
-    host: str = Header(None),
+@book_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Book)
+async def create_a_book(
+    book_data: BookCreateModel, session: AsyncSession = Depends(get_session)
 ) -> dict:
-    request_headers = {}
-    request_headers["Accept"] = accept
-    request_headers["Content-Type"] = content_type
-    request_headers["User-Agent"] = user_agent
-    request_headers["Host"] = host
+    new_book = await book_service.create_book(book_data, session)
+    return new_book
 
-    return request_headers
+
+@book_router.get("/book_uid", response_model=Book)
+async def get_book(book_uid: str, session: AsyncSession = Depends(get_session)) -> dict:
+    the_book = await book_service.get_book(book_uid, session)
+
+    if the_book is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Book not found"
+        )
+
+    else:
+        return the_book
+
+
+@book_router.patch("/book_uid", response_model=Book)
+async def update_book(
+    book_uid: str,
+    book_update_data: BookUpdateModel,
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    updated_book = await book_service.update_book(book_uid, book_update_data, session)
+
+    if updated_book is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Book not found"
+        )
+
+    else:
+        return updated_book
+
+
+@book_router.delete("/book_uid", status_code=status.HTTP_201_CREATED)
+async def delete_book(
+    book_uid: str,
+    session: AsyncSession = Depends(get_session),
+):
+    deleted_book = book_service.delete_book(book_uid, session)
+
+    if deleted_book is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Book not found"
+        )
+    else:
+        return {}

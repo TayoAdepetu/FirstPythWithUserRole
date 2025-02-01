@@ -6,22 +6,22 @@ app = FastAPI()
 
 
 @app.get("/")
-def read_root():
+async def read_root():
     return {"message": "Welcome to FastAPI"}
 
 
 @app.get("/greet/{name}")
-def greet(name: str) -> dict:
+async def greet(name: str) -> dict:
     return {"message": f"How are you doing, {name}"}
 
 
 @app.get("/greet")
-def greet_query(name: str) -> dict:
+async def greet_query(name: str) -> dict:
     return {"message": f"How are you doing, {name}"}
 
 
 @app.get("/regreet/{name}")
-def greet_query(name: str, age: int) -> dict:
+async def greet_query(name: str, age: int) -> dict:
     return {
         "message": f"How are you doing, {name}. I heard you are {age} years old. Is that true?"
     }
