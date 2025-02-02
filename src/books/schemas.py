@@ -14,7 +14,7 @@ class BookCreateModel(BaseModel):
 # model format to retrieve
 class Book(BaseModel):
     id: int
-    uid: uuid
+    uid: uuid.UUID
     title: str
     author: str
     publisher: str
