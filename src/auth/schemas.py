@@ -4,6 +4,7 @@ import sqlalchemy.dialects.postgresql as pg
 from datetime import datetime
 import uuid
 
+
 class UserCreateModel(BaseModel):
     username: str = Field(max_length=15)
     email: str = Field(max_length=40)
@@ -21,5 +22,10 @@ class UserModel(BaseModel):
     last_name: str
     password_hash: str = Field(exclude=True)
     is_verified: bool
-    created_at: datetime 
-    updated_at: datetime 
+    created_at: datetime
+    updated_at: datetime
+
+
+class UserLoginModel(BaseModel):
+    email: str = Field(max_length=40)
+    password: str = Field(min_length=26)
