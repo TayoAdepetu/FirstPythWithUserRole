@@ -19,7 +19,7 @@ app = FastAPI(
     title="BizCertify API",
     description="AI API For BizCertify",
     version=version,
-    lifespan=life_span,
+    # lifespan=life_span, #commented out since we are now using alembic to do db migration, so that our init db will not run again
 )
 
 app.include_router(book_router, prefix=f"/api/{version}/books", tags=["books"])
