@@ -3,7 +3,8 @@ from sqlmodel import Column
 import sqlalchemy.dialects.postgresql as pg
 from datetime import datetime
 import uuid
-
+from typing import List
+from src.books.schemas import Book
 
 class UserCreateModel(BaseModel):
     username: str = Field(max_length=15)
@@ -24,6 +25,10 @@ class UserModel(BaseModel):
     is_verified: bool
     created_at: datetime
     updated_at: datetime
+    
+    
+class UserBooksModel(UserModel):
+    books: List[Book] 
 
 
 class UserLoginModel(BaseModel):
