@@ -5,6 +5,7 @@ from src.books.schemas import Book, BookCreateModel, BookUpdateModel
 from src.db.main import get_session
 from sqlmodel.ext.asyncio.session import AsyncSession
 from src.auth.dependencies import AccessTokenBearer, RoleChecker
+from .schemas import BookDetailModel
 
 from typing import List, Optional
 
@@ -39,7 +40,7 @@ async def create_a_book(
     return new_book
 
 
-@book_router.get("/book_uid", response_model=Book)
+@book_router.get("/book_uid", response_model=BookDetailModel)
 async def get_book(book_uid: str, session: AsyncSession = Depends(get_session)) -> dict:
     the_book = await book_service.get_book(book_uid, session)
 

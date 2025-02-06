@@ -4,6 +4,7 @@ from src.books.service import BookService
 from sqlmodel.ext.asyncio.session import AsyncSession
 from .schemas import ReviewCreateModel
 from fastapi import HTTPException, status
+import logging
 
 book_service = BookService()
 user_service = UserServives()
@@ -12,6 +13,7 @@ user_service = UserServives()
 class ReviewService:
 
     async def add_review_to_book(
+        self,
         user_email: str,
         book_uid: str,
         review_data: ReviewCreateModel,
@@ -48,6 +50,7 @@ class ReviewService:
             await session.commit()
             
         except Exception as e:
+            logging.exception(e)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Oops! Something went wrong!",

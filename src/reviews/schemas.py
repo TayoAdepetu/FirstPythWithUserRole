@@ -13,7 +13,7 @@ class ReviewModel(BaseModel):
     created_at: datetime 
     updated_at: datetime 
 
-class ReviewCreateModel:
+class ReviewCreateModel(BaseModel):
 
     rating: int
     review_text: str

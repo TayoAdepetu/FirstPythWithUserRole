@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime, date
 import uuid
+from typing import List
+from src.reviews.schemas import ReviewModel
 
 # model format to create
 class BookCreateModel(BaseModel):
@@ -33,3 +35,5 @@ class BookUpdateModel(BaseModel):
     page_count: int
     language: str
 
+class BookDetailModel(Book):
+    reviews:List[ReviewModel]

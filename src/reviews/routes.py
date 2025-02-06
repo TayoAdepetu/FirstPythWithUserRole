@@ -20,3 +20,5 @@ async def add_review_to_book(
     new_review = await review_service.add_review_to_book(
         current_user.email, book_uid, review_data, session
     )
+    
+    return new_review
